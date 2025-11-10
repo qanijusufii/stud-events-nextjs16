@@ -4,6 +4,7 @@ import BookEvent from "@/components/BookEvent";
 import {getSimilarEventsBySlug} from "@/lib/actions/event.actions";
 import {IEvent} from "@/database";
 import EventCard from "@/components/EventCard";
+import {cacheLife} from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -19,8 +20,8 @@ const EventAgenda = ({agendaItems}:{agendaItems:string[]})=> (
     <div className="agenda">
         <h2>Agenda</h2>
         <ul>
-                {agendaItems.map((item)=>(
-                    <li key={item}>{item}</li>
+            {agendaItems.map((item)=>(
+                <li key={item}>{item}</li>
             ))}
         </ul>
     </div>
@@ -36,11 +37,22 @@ const EventTags = ({tags}: {tags:string[]})=> (
 )
 
 const EventDetailsPage = async ({params} : {params: Promise<{slug: string}>}) => {
+    'use cache';
+    cacheLife('hours');
     const { slug } = await params;
     const request = await fetch(`${BASE_URL}/api/events/${slug}`);
-    const { event: {description, image, overview, date, time, location, mode, agenda,audience, tags, organizer}} = await request.json();
+    if (!request.ok) {
+        return notFound();
+    }
 
-    if(!description) return notFound();
+    const payload = await request.json();
+    const event = payload.event;
+
+    if (!event) {
+         return notFound();
+    }
+
+    const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
 
     const bookings = 10;
 
@@ -92,7 +104,7 @@ const EventDetailsPage = async ({params} : {params: Promise<{slug: string}>}) =>
                             <p className="text-sm">Be the first to book your spot!</p>
                         )}
 
-                        <BookEvent />
+                        <BookEvent eventId={event._id} slug={event.slug}/>
                     </div>
                 </aside>
 
