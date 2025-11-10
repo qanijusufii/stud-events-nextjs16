@@ -48,3 +48,13 @@ export const getSimilarEventsBySlug = async (slug: string): Promise<LeanEvent[]>
         return [];
     }
 }
+
+export const getAllEvents = async (): Promise<LeanEvent[]> => {
+    try {
+        await connectDB();
+        const events = await Event.find().sort({ createdAt: -1 }).lean();
+        return events as unknown as LeanEvent[];
+    } catch {
+        return [];
+    }
+}
