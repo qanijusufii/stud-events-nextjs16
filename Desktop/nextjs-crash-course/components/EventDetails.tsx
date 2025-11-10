@@ -6,6 +6,7 @@ import Image from "next/image";
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
 import {cacheLife} from "next/cache";
+import {Query} from "sift";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -58,7 +59,9 @@ const EventDetails = async ({ params }:{params: Promise<string>}) => {
 
     const bookings = 10;
 
-    const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const similarEvents: (Query<Default__v<Require_id<FlattenMaps<BufferToBinary<any>>>>[], any, {}, any, "find", {}> & {}) | any[] = await getSimilarEventsBySlug(slug);
 
     return (
         <section id="event">
