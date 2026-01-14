@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/database/booking.model';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * POST /api/bookings
  * Creates a new booking for an event
@@ -54,7 +58,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error('Booking creation failed:', error);
 
-        // Handle duplicate booking error (if email already booked this event)
+        // Handle duplicate booking error
         if (error instanceof Error && error.message.includes('duplicate')) {
             return NextResponse.json(
                 { message: 'This email has already booked this event' },
