@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Schibsted_Grotesk, Martian_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import LightRays from "@/components/LightRays";
 import Navbar from "@/components/Navbar";
@@ -29,25 +30,35 @@ export default function RootLayout({
       <body
         className={`${schibstedGrotesk.variable} ${martianMono.variable} min-h-screen antialiased`}
       >
-      <Navbar />
-      <div className="absolute inset-0 top-0 z-[-1] min-h-screen">
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-FYVJK31GRR"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-FYVJK31GRR');
+        `}
+        </Script>
 
+        <Navbar />
+        <div className="absolute inset-0 top-0 z-[-1] min-h-screen">
           <LightRays
-              raysOrigin="top-center-offset"
-              raysColor="#5dfeca"
-              raysSpeed={0.5}
-              lightSpread={0.9}
-              rayLength={1.4}
-              followMouse={true}
-              mouseInfluence={0.02}
-              noiseAmount={0.0}
-              distortion={0.01}
+            raysOrigin="top-center-offset"
+            raysColor="#5dfeca"
+            raysSpeed={0.5}
+            lightSpread={0.9}
+            rayLength={1.4}
+            followMouse={true}
+            mouseInfluence={0.02}
+            noiseAmount={0.0}
+            distortion={0.01}
           />
-      </div>
-      <main>
-          {children}
-      </main>
-
+        </div>
+        <main>{children}</main>
       </body>
     </html>
   );
