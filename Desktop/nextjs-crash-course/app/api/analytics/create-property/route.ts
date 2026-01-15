@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AnalyticsAdminServiceClient } from '@google-analytics/admin';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { protos } from '@google-analytics/admin';
 
 /**
@@ -9,7 +7,6 @@ import { protos } from '@google-analytics/admin';
  * Creates a new Google Analytics property and returns the measurement ID and tracking script
  */
 export async function POST(req: NextRequest) {
-    // ... rest of the code stays the same
     try {
         const body = await req.json();
         const { displayName, websiteUrl } = body;
@@ -25,9 +22,17 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Load service account credentials
-        const credentialsPath = join(process.cwd(), 'credentials', 'google-analytics-key.json');
-        const credentials = JSON.parse(readFileSync(credentialsPath, 'utf-8'));
+        // Get credentials from environment variable
+        const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+        
+        if (!credentialsJson) {
+            return NextResponse.json(
+                { message: 'Google Analytics credentials not configured' },
+                { status: 500 }
+            );
+        }
+
+        const credentials = JSON.parse(credentialsJson);
 
         // Initialize Analytics Admin client
         const analyticsAdmin = new AnalyticsAdminServiceClient({
